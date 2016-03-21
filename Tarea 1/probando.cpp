@@ -6,6 +6,7 @@
 #include <istream>
 #include <map>
 #include <cmath>
+#include <set>
 
 using std::string;
 using std::cout;
@@ -47,18 +48,44 @@ struct Datos{
 double Probabilidades (int v1){
     return (v1/double(650))*100;
 }
-int main(int argc, char *argv[])
-{
+void Read_Categories(std::map<string,std::set<string> > &C){
+    std:: ifstream in("Categorias.txt");
+    if (in.fail())  (cout << "File not found" << endl);
+    string palabra;
+    while(in.good()){
+        getline(in,palabra);
+        string _princi_word=palabra;
+        while(in.good()){
+            getline(in,palabra);
+            if(palabra[0]=='	'){
+                if(palabra[1]=='	')break;
+                C[_princi_word].insert(palabra);
+            }
+        }
+    }
+
+}
+int main(int argc, char *argv[]){
     std::map <string,Datos> Preguntas;
-    int _entro_idio[1][2];
-    int _entro_clase[1][7];
+    int _entro_idio[1][2];//idioma
+    int _entro_clase[1][7];//anclaje
     std::ifstream in("datos.csv");
+
+    std::map<string,std::set<string> > Categorias;
+
+    Read_Categories(Categorias);
+    /*for (auto i1=Categorias.begin();i1!=Categorias.end();i1++){
+        cout << i1->first << endl;
+        for(auto i2=i1->second.begin(); i2!=i1->second.end();i2++){
+            cout << *i2 << endl;
+        }
+
+    }*/
     if (in.fail()) return (cout << "File not found" << endl) && 0;
         //std::vector<std::string> row1 = csv_read_row(in, ',');
         //cout << row1[3] << endl;
         std::vector<std::string> row = csv_read_row(in, ',');
-    while(in.good())
-    {
+    while(in.good()){
         std::vector<std::string> row = csv_read_row(in, ',');
 	      //cout << "- " << row[4] << endl;
         for(int i=0, leng=row.size(); i<leng; i++){
@@ -72,6 +99,7 @@ int main(int argc, char *argv[])
         }
     }
     in.close();
+
     for (int i=0;i<2;i++)
         _entro_idio[0][i]=0;
     for (int i=0;i<7;i++)
