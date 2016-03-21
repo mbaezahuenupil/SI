@@ -24,6 +24,29 @@ struct Datos{
     string Idioma;
 };
 
+/*Class Probabilidades{
+    Private:
+        int _perio;
+        int _rafa;
+        int _permanent;
+        int _permanentR;
+        int _m-rafa;
+        int _drift;
+        int _others;
+    Public
+        Probabilidades (int perio, int rafa, int permanent, int permanentR, int m-rafa, int drift, int others){
+            _perio=perio;
+            _rafa=rafa;
+            _permanent=permanent;
+            _permanentR=permanentR;
+            _m-rafa=m-rafa;
+            _drift=drift;
+            _others=others;
+        }
+}*/
+double Probabilidades (int v1){
+    return (v1/double(650))*100;
+}
 int main(int argc, char *argv[])
 {
     std::map <string,Datos> Preguntas;
@@ -78,6 +101,17 @@ int main(int argc, char *argv[])
         if(i->second.Clase=="DRIFT")_entro_clase[0][5]++;
         if(i->second.Clase=="OTROS")_entro_clase[0][6]++;
     }
+    cout << "PROBABILIDADES" << endl;
+    cout << "PERIODICA      : " << Probabilidades(_entro_clase[0][0]) << "%" << endl;
+    cout << "RAFAGA         : " << Probabilidades(_entro_clase[0][1]) << "%" << endl;
+    cout << "PERMANENTER    : " << Probabilidades(_entro_clase[0][2]) << "%" << endl;
+    cout << "PERMANENTE-NR  : " << Probabilidades(_entro_clase[0][3]) << "%" << endl;
+    cout << "M-RAFAGA       : " << Probabilidades(_entro_clase[0][4]) <<  "%" << endl;
+    cout << "DRIFT          : " << Probabilidades(_entro_clase[0][5]) << "%" << endl;
+    cout << "OTROS          : " << Probabilidades(_entro_clase[0][6]) << "%" << endl;
+    cout << "--------------" << endl;
+
+
     cout << "Entropia Para el IDIOMA ESP = " << -1*((double(_entro_idio[0][0]))/650)*log2((double(_entro_idio[0][0]))/650 ) << endl ;
     cout << "Entropia Para el IDIOMA ENG = " << -1*((double(_entro_idio[0][1]))/650)*log2((double(_entro_idio[0][1]))/650 ) << endl ;
 
