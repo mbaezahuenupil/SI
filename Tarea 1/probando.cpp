@@ -52,18 +52,27 @@ void Read_Categories(std::map<string,std::set<string> > &C){
     std:: ifstream in("Categorias.txt");
     if (in.fail())  (cout << "File not found" << endl);
     string palabra;
+    string _princi_word;
     while(in.good()){
         getline(in,palabra);
-        string _princi_word=palabra;
-        while(in.good()){
-            getline(in,palabra);
-            if(palabra[0]=='	'){
-                if(palabra[1]=='	')break;
-                C[_princi_word].insert(palabra);
+        if(palabra[0]!='	'){
+            _princi_word=palabra;
+        }
+        if(palabra[0]=='	'){
+            if(palabra[1]=='	'){
+                continue;
             }
+            //cout << _princi_word << endl;
+            //cout << palabra << endl;
+            C[_princi_word].insert(palabra);
         }
     }
-
+    for (auto i1=C.begin();i1!=C.end();i1++){
+            cout << i1->first << endl;
+            for(auto i2=i1->second.begin(); i2!=i1->second.end();i2++){
+                cout << *i2 << endl;
+            }
+     }
 }
 int main(int argc, char *argv[]){
     std::map <string,Datos> Preguntas;
@@ -73,7 +82,7 @@ int main(int argc, char *argv[]){
 
     std::map<string,std::set<string> > Categorias;
 
-    Read_Categories(Categorias);
+    Read_Categories(Categorias);//obtengo las categorias del archivo.txt
     /*for (auto i1=Categorias.begin();i1!=Categorias.end();i1++){
         cout << i1->first << endl;
         for(auto i2=i1->second.begin(); i2!=i1->second.end();i2++){
@@ -81,6 +90,10 @@ int main(int argc, char *argv[]){
         }
 
     }*/
+
+    /*
+     * Obtengo la informacion del .csv
+     * */
     if (in.fail()) return (cout << "File not found" << endl) && 0;
         //std::vector<std::string> row1 = csv_read_row(in, ',');
         //cout << row1[3] << endl;
