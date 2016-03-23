@@ -7,6 +7,9 @@
 #include <map>
 #include <cmath>
 #include <set>
+#include <stdio.h>
+#include <string.h>
+
 
 using std::string;
 using std::cout;
@@ -18,33 +21,93 @@ std::vector<std::string> csv_read_row(std::string &in, char delimiter);
 struct Datos{
     string Titulo;
     string Cuerpo;
-    string Categoria;
+    std::set<string> Categoria;
     string Clase;
     int Seguidores;
     int Respuestas;
     string Idioma;
 };
-
-/*Class Probabilidades{
-    Private:
-        int _perio;
-        int _rafa;
-        int _permanent;
-        int _permanentR;
-        int _m-rafa;
-        int _drift;
-        int _others;
-    Public
-        Probabilidades (int perio, int rafa, int permanent, int permanentR, int m-rafa, int drift, int others){
-            _perio=perio;
-            _rafa=rafa;
-            _permanent=permanent;
-            _permanentR=permanentR;
-            _m-rafa=m-rafa;
-            _drift=drift;
-            _others=others;
+struct Anclaje{
+    int _perio;
+    int _rafa;
+    int _permanent;
+    int _permanentR;
+    int _mrafa;
+    int _drift;
+    int _others;
+};
+void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <string,Datos> P){
+    /*
+    Arts &amp; Humanities
+    Business &amp; Finance
+    Consumer Electronics
+    Education &amp; Reference
+    Entertainment &amp; Music
+    Health
+    Games &amp; Recreation
+    Science &amp; Mathematics
+    Beauty &amp; Style
+    Sports
+    Social Science
+    Cars &amp; Transportation
+    Dining Out
+    Food &amp; Drink
+    Home &amp; Garden
+    Local Businesses
+    Family &amp; Relationships
+    News &amp; Events
+    Pets
+    Politics &amp; Government
+    Environment
+    Society &amp; Culture
+    Royalty
+    Travel
+    Computers &amp; Internet
+    Pregnancy &amp; Parenting
+    Yahoo Products
+    */
+    int m[1][27];
+    for (int i=0; i<27;i++){
+        m[0][i]=0;
+    }
+    for (auto i1=P.begin();i1!=P.end();i1++){
+        for(auto i2=i1->second.Categoria.begin();i2!=i1->second.Categoria.end();i2++){
+            cout << *i2 << endl;
+            if(*i2=="Arts &amp; Humanities"){m[0][0]+=i1->second.Seguidores;continue;}
+            if(*i2=="Business &amp; Finance"){m[0][1]+=i1->second.Seguidores;continue;}
+            if(*i2=="Consumer Electronics"){m[0][2]+=i1->second.Seguidores;continue;}
+            if(*i2=="Education &amp; Reference"){m[0][3]+=i1->second.Seguidores;continue;}
+            if(*i2=="Entertainment &amp; Music"){m[0][4]+=i1->second.Seguidores;continue;}
+            if(*i2=="Health"){m[0][5]+=i1->second.Seguidores;continue;}
+            if(*i2=="Games &amp; Recreation"){m[0][6]+=i1->second.Seguidores;continue;}
+            if(*i2=="Science &amp; Mathematics"){m[0][7]+=i1->second.Seguidores;continue;}
+            if(*i2=="Beauty &amp; Style"){m[0][8]+=i1->second.Seguidores;continue;}
+            if(*i2=="Sports"){m[0][9]+=i1->second.Seguidores;continue;}
+            if(*i2=="Social Science"){m[0][10]+=i1->second.Seguidores;continue;}
+            if(*i2=="Cars &amp; Transportation"){m[0][11]+=i1->second.Seguidores;continue;}
+            if(*i2=="Dining Out"){m[0][12]+=i1->second.Seguidores;continue;}
+            if(*i2=="Food &amp; Drink"){m[0][13]+=i1->second.Seguidores;continue;}
+            if(*i2=="Home &amp; Garden"){m[0][14]+=i1->second.Seguidores;continue;}
+            if(*i2=="Local Businesses"){m[0][15]+=i1->second.Seguidores;continue;}
+            if(*i2=="Family &amp; Relationships"){m[0][16]+=i1->second.Seguidores;continue;}
+            if(*i2=="News &amp; Events"){m[0][17]+=i1->second.Seguidores;continue;}
+            if(*i2=="Pets"){m[0][18]+=i1->second.Seguidores;continue;}
+            if(*i2=="Politics &amp; Government"){m[0][19]+=i1->second.Seguidores;continue;}
+            if(*i2=="Environment"){m[0][20]++;continue;}
+            if(*i2=="Society &amp; Culture"){m[0][21]+=i1->second.Seguidores;continue;}
+            if(*i2=="Royalty"){m[0][22]+=i1->second.Seguidores;continue;}//no hay
+            if(*i2=="Travel"){m[0][23]+=i1->second.Seguidores;continue;}
+            if(*i2=="Computers &amp; Internet"){m[0][24]+=i1->second.Seguidores;continue;}
+            if(*i2=="Pregnancy &amp; Parenting"){m[0][25]+=i1->second.Seguidores;continue;}
+            if(*i2=="Yahoo Products"){m[0][26]+=i1->second.Seguidores;continue;}
         }
-}*/
+    }int sum=0;
+    for (int i=0; i<27;i++){
+        cout << m[0][i] << endl;
+        sum+=m[0][i];
+    }
+    cout << sum << endl;
+}
 double Probabilidades (int v1){
     return (v1/double(650))*100;
 }
@@ -62,53 +125,77 @@ void Read_Categories(std::map<string,std::set<string> > &C){
             if(palabra[1]=='	'){
                 continue;
             }
-            //cout << _princi_word << endl;
-            //cout << palabra << endl;
             C[_princi_word].insert(palabra);
         }
     }
-    for (auto i1=C.begin();i1!=C.end();i1++){
-            cout << i1->first << endl;
-            for(auto i2=i1->second.begin(); i2!=i1->second.end();i2++){
-                cout << *i2 << endl;
-            }
-     }
+
+}
+std::vector<string> split(string str, char delimiter) {
+  std::vector<string> internal;
+  std::stringstream ss(str); // Turn the string into a stream.
+  string tok;
+
+  while(getline(ss, tok, delimiter)) {
+    if(tok[0]==' '){
+        tok=tok.substr(1,tok.size()-1);
+    }
+    internal.push_back(tok);
+    //cout << tok << endl;
+  }
+
+  return internal;
 }
 int main(int argc, char *argv[]){
+    Anclaje Anclaje_vs_Seguidores;
     std::map <string,Datos> Preguntas;
     int _entro_idio[1][2];//idioma
     int _entro_clase[1][7];//anclaje
+
     std::ifstream in("datos.csv");
 
     std::map<string,std::set<string> > Categorias;
 
     Read_Categories(Categorias);//obtengo las categorias del archivo.txt
-    /*for (auto i1=Categorias.begin();i1!=Categorias.end();i1++){
-        cout << i1->first << endl;
-        for(auto i2=i1->second.begin(); i2!=i1->second.end();i2++){
-            cout << *i2 << endl;
-        }
 
-    }*/
 
     /*
      * Obtengo la informacion del .csv
      * */
     if (in.fail()) return (cout << "File not found" << endl) && 0;
-        //std::vector<std::string> row1 = csv_read_row(in, ',');
-        //cout << row1[3] << endl;
-        std::vector<std::string> row = csv_read_row(in, ',');
+
+    std::vector<std::string> row = csv_read_row(in, ',');
+
     while(in.good()){
-        std::vector<std::string> row = csv_read_row(in, ',');
-	      //cout << "- " << row[4] << endl;
+        row = csv_read_row(in, ',');
+
         for(int i=0, leng=row.size(); i<leng; i++){
+
             Preguntas[row[0]].Titulo=row[1];
             Preguntas[row[0]].Cuerpo=row[2];
-            Preguntas[row[0]].Categoria=row[3];
+
+            std::vector<string>_Category=split(row[3], ',');
+            for(int i=0;i<_Category.size();i++){
+                Preguntas[row[0]].Categoria.insert(_Category[i]);
+            }
             Preguntas[row[0]].Clase=row[4];
             Preguntas[row[0]].Seguidores=atoi(row[5].c_str());
             Preguntas[row[0]].Respuestas=atoi(row[6].c_str());
             Preguntas[row[0]].Idioma=row[7];
+
+            /*
+            OBTENER RELACION ENTRE ANCLAJE Y SEGUIDORES......
+            */
+            if(row[4]=="PERIODICA")Anclaje_vs_Seguidores._perio++;
+            if(row[4]=="RAFAGA")Anclaje_vs_Seguidores._rafa++;
+            if(row[4]=="PERMANENTER")Anclaje_vs_Seguidores._permanent++;
+            if(row[4]=="PERMANENTE-NR")Anclaje_vs_Seguidores._permanentR++;
+            if(row[4]=="M-RAFAGA")Anclaje_vs_Seguidores._mrafa++;
+            if(row[4]=="DRIFT")Anclaje_vs_Seguidores._drift++;
+            if(row[4]=="OTROS")Anclaje_vs_Seguidores._others++;
+
+            /*
+            OBTENER CATEGORIAS VS SEGUIDORES
+            */
         }
     }
     in.close();
@@ -164,6 +251,7 @@ int main(int argc, char *argv[]){
     cout << "Entropia Para la clase DRIFT         = " << -1*((double(_entro_clase[0][5]))/650)*log2((double(_entro_clase[0][5]))/650 ) << endl ;
     cout << "Entropia Para la clase OTROS         = " << -1*((double(_entro_clase[0][6]))/650)*log2((double(_entro_clase[0][6]))/650 ) << endl ;
 
+    Categorias_vs_Seguidores(Categorias,Preguntas);
 
     return 0;
 }
