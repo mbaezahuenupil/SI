@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 using std::string;
 using std::cout;
 using std::endl;
@@ -100,12 +99,10 @@ void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <st
             if(*i2=="Yahoo Products"){m[0][25]+=i1->second.Seguidores;continue;}
         }
     }
-    int sum=0;
+    std::ofstream archivo("Relacion Categorias_vs_Seguidores.csv");
     for (int i=0; i<26;i++){
-        cout << "La categoria " << categoria[i] << "-> " << m[0][i] << endl;
-        sum+=m[0][i];
+        archivo << "La categoria " << categoria[i] << ";" << m[0][i] << endl;
     }
-    cout << "CANTIDAD DE SEGUIDORES!!!" << sum << endl;
 }
 double Probabilidades (int v1){
     return (v1/double(650))*100;
@@ -145,7 +142,7 @@ std::vector<string> split(string str, char delimiter) {
   return internal;
 }
 void _Entropia_Idioma(std::map <string,Datos> P){
-    int _entr_idio [2][7];
+    int _entr_idio[2][7];
     for (int i=0;i<7;i++){
         _entr_idio[0][i]=0;//español..
         _entr_idio[1][i]=0;//idioma...
@@ -175,15 +172,16 @@ void _Entropia_Idioma(std::map <string,Datos> P){
         entr_idioma[0][0]+=-1*((double(_entr_idio[0][i]))/260)*log2((double(_entr_idio[0][i]))/260 );
         entr_idioma[0][1]+=-1*((double(_entr_idio[0][i]))/390)*log2((double(_entr_idio[0][i]))/390 );
     }
-    cout << "ENTROPIA PARA EL ESPN " << endl;
-    cout << entr_idioma[0][0] << endl;
-    cout << "-----------------------" << endl;
-    cout << "ENTROPIA PARA EL ENG " << endl;
-    cout << entr_idioma[0][1] << endl;
+    std::ofstream archivo("ENTROPIA IDIOMAS.csv");
+
+    archivo << "ENTROPIA PARA EL ESPN " << ";";
+    archivo << entr_idioma[0][0] << endl;
+    archivo << "ENTROPIA PARA EL ENG " << ";";
+    archivo << entr_idioma[0][1] << endl;
 }
 
 
-void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7]){
+void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7],std::vector<string> categoria){
     int m[7][27];
     for (int i=0; i<26;i++){
         m[0][i]=0;m[1][i]=0;m[2][i]=0;m[3][i]=0;m[4][i]=0;m[5][i]=0;m[6][i]=0;
@@ -432,7 +430,6 @@ void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7])
     double suma=0.0;
     double entro_x_categoria[26];
     int i;
-    cout << "ENTROPIA POR CLASES" << endl;
     for (int j=0;j<26;j++){
         if(j==0){
 
@@ -648,8 +645,9 @@ void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7])
         }
 
     }
+    std::ofstream archivo("ENTROPIA CATEGORIA.csv");
     for (int i=0;i< 26;i++){
-        cout << entro_x_categoria[i] << endl;
+        archivo << "La categoria " << categoria[i] << ";" << entro_x_categoria[i] << endl;
 
     }
 
@@ -664,13 +662,17 @@ void _Entro_General(int m[1][7]){
     cout << "ENTROPIA DE MANERA GENERAL ---> " << suma << endl;
 }
 void Anclaje_vs_Seguidores(int m[1][7], std::vector<string> anclaje) {
+    std::ofstream archivo("Relacion Anclaje vs Seguidores.csv");
+
     for(int i=0;i<7;i++){
-        cout << "El anclaje " << anclaje[i] << " posee -> " << m[0][i] << " Seguidores"<< endl;
+        archivo <<  anclaje[i] << ";" << m[0][i] << endl;
     }
 }
 void Anclaje_vs_NRespuestas(int m[1][7],std::vector<string> nrespuestas){
+    std::ofstream archivo("Relacion Anclaje vs NRESPUESTAS.csv");
+
     for(int i=0;i<7;i++){
-        cout << "El anclaje " << nrespuestas[i] << " posee -> " << m[0][i] << " Respuestas" << endl;
+        archivo << nrespuestas[i] << ";" << m[0][i] << endl;
     }
 }
 void Categorias_vs_NRespuestas (std::map<string,std::set<string> > C,std::map <string,Datos> P,std::vector<string> categoria){
@@ -710,19 +712,18 @@ void Categorias_vs_NRespuestas (std::map<string,std::set<string> > C,std::map <s
             if(*i2=="Yahoo Products"){m[0][25]+=i1->second.Respuestas;continue;}
         }
     }
-    int sum=0.0;
+    std::ofstream archivo("Relacion Categoria vs NRESPUESTAS.csv");
+
     for (int i=0; i<26;i++){
-        cout << "La categoria " << categoria[i] << " posee -> " << m[0][i] << " numeros de respuestas"  << endl;
-        sum+=m[0][i];
+        archivo <<  categoria[i] << ";" << m[0][i] << endl;
     }
-    cout << "CANTIDAD DE respuestas " << sum << endl;
 }
 int main(int argc, char *argv[]){
-    //Anclaje Anclaje_vs_Seguidores;
     std::map <string,Datos> Preguntas;
     int _entro_idio[1][2];//idioma
     int _entro_clase[1][7];//anclaje
     int _n_respuestas[1][7];//Anclaje_vs_NRespuestas
+    int _seguidores[1][7];//Anclaje vs Seguidores
 
     std::ifstream in("datos.csv");
 
@@ -764,6 +765,7 @@ int main(int argc, char *argv[]){
     for (int i=0;i<7;i++){
         _entro_clase[0][i]=0;
         _n_respuestas[0][i]=0;
+        _seguidores[0][i]=0;
     }
 
     for (auto i=Preguntas.begin();i!=Preguntas.end();i++){
@@ -784,30 +786,37 @@ int main(int argc, char *argv[]){
         */
         if(i->second.Clase=="PERIODICA"){
             _entro_clase[0][0]++;
+            _seguidores[0][0]+=i->second.Seguidores;
             _n_respuestas[0][0]+=i->second.Respuestas;
         }
         if(i->second.Clase=="RAFAGA"){
             _entro_clase[0][1]++;
+            _seguidores[0][1]+=i->second.Seguidores;
             _n_respuestas[0][1]+=i->second.Respuestas;
         }
         if(i->second.Clase=="PERMANENTER"){
             _entro_clase[0][2]++;
+            _seguidores[0][2]+=i->second.Seguidores;
             _n_respuestas[0][2]+=i->second.Respuestas;
         }
         if(i->second.Clase=="PERMANENTE-NR"){
+            _seguidores[0][3]+=i->second.Seguidores;
             _entro_clase[0][3]++;
             _n_respuestas[0][3]+=i->second.Respuestas;
         }
         if(i->second.Clase=="M-RAFAGA"){
             _entro_clase[0][4]++;
+            _seguidores[0][4]+=i->second.Seguidores;
             _n_respuestas[0][4]+=i->second.Respuestas;
         }
         if(i->second.Clase=="DRIFT"){
             _entro_clase[0][5]++;
+            _seguidores[0][5]+=i->second.Seguidores;
             _n_respuestas[0][5]+=i->second.Respuestas;
         }
         if(i->second.Clase=="OTROS"){
             _entro_clase[0][6]++;
+            _seguidores[0][6]+=i->second.Seguidores;
             _n_respuestas[0][6]+=i->second.Respuestas;
         }
 
@@ -868,11 +877,10 @@ int main(int argc, char *argv[]){
     _Entropia_Idioma(Preguntas);
     //por categorias
     cout << " ENTROIA Categorias " << endl;
-    _Entro_Categoria(Preguntas,_entro_clase);
+    _Entro_Categoria(Preguntas,_entro_clase,categorias);
     //General
     cout << " ENTROIA General " << endl;
     _Entro_General(_entro_clase);
-
     /*
         RELACIONES....
 
@@ -880,12 +888,13 @@ int main(int argc, char *argv[]){
     cout << "Relaciones categorias vs seguidores " << endl;
     Categorias_vs_Seguidores(Categorias,Preguntas,categorias);//TABLA
     cout << "Relaciones anclaje vs seguidores " << endl;
-    Anclaje_vs_Seguidores(_entro_clase,anclaje);//Grafico
+    Anclaje_vs_Seguidores(_seguidores,anclaje);//Grafico
 
     cout << "Relaciones ANCLAJE vs nrespuestas " << endl;
     Anclaje_vs_NRespuestas(_n_respuestas,anclaje);
     cout << "Relaciones categorias vs NRESPUESTAS " << endl;
     Categorias_vs_NRespuestas(Categorias,Preguntas,categorias);
+
     return 0;
 }
 
