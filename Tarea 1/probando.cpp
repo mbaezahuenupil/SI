@@ -36,7 +36,7 @@ struct Anclaje{
     int _drift;
     int _others;
 };
-void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <string,Datos> P){
+void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <string,Datos> P,std::vector<string> categoria){
     /*
     Arts &amp; Humanities
     Business &amp; Finance
@@ -71,7 +71,7 @@ void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <st
     }
     for (auto i1=P.begin();i1!=P.end();i1++){
         for(auto i2=i1->second.Categoria.begin();i2!=i1->second.Categoria.end();i2++){
-            cout << *i2 << endl;
+            //cout << *i2 << endl;
             if(*i2=="Arts &amp; Humanities"){m[0][0]+=i1->second.Seguidores;continue;}
             if(*i2=="Business &amp; Finance"){m[0][1]+=i1->second.Seguidores;continue;}
             if(*i2=="Consumer Electronics"){m[0][2]+=i1->second.Seguidores;continue;}
@@ -92,19 +92,20 @@ void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <st
             if(*i2=="News &amp; Events"){m[0][17]+=i1->second.Seguidores;continue;}
             if(*i2=="Pets"){m[0][18]+=i1->second.Seguidores;continue;}
             if(*i2=="Politics &amp; Government"){m[0][19]+=i1->second.Seguidores;continue;}
-            if(*i2=="Environment"){m[0][20]++;continue;}
+            if(*i2=="Environment"){m[0][20]+=i1->second.Seguidores;continue;}
             if(*i2=="Society &amp; Culture"){m[0][21]+=i1->second.Seguidores;continue;}
             if(*i2=="Travel"){m[0][22]+=i1->second.Seguidores;continue;}
             if(*i2=="Computers &amp; Internet"){m[0][23]+=i1->second.Seguidores;continue;}
             if(*i2=="Pregnancy &amp; Parenting"){m[0][24]+=i1->second.Seguidores;continue;}
             if(*i2=="Yahoo Products"){m[0][25]+=i1->second.Seguidores;continue;}
         }
-    }int sum=0;
+    }
+    int sum=0;
     for (int i=0; i<26;i++){
-        cout << m[0][i] << endl;
+        cout << "La categoria " << categoria[i] << "-> " << m[0][i] << endl;
         sum+=m[0][i];
     }
-    cout << sum << endl;
+    cout << "CANTIDAD DE SEGUIDORES!!!" << sum << endl;
 }
 double Probabilidades (int v1){
     return (v1/double(650))*100;
@@ -169,23 +170,16 @@ void _Entropia_Idioma(std::map <string,Datos> P){
             if(i->second.Clase=="OTROS")_entr_idio[1][6]++;
         }
     }
+    double entr_idioma[2][1];
+    for (int i=0;i<7;i++){
+        entr_idioma[0][0]+=-1*((double(_entr_idio[0][i]))/260)*log2((double(_entr_idio[0][i]))/260 );
+        entr_idioma[0][1]+=-1*((double(_entr_idio[0][i]))/390)*log2((double(_entr_idio[0][i]))/390 );
+    }
     cout << "ENTROPIA PARA EL ESPN " << endl;
-    cout << "clase PERIODICA     = " << -1*((double(_entr_idio[0][0]))/260)*log2((double(_entr_idio[0][0]))/260 ) << endl ;
-    cout << "clase RAFAGA        = " << -1*((double(_entr_idio[0][1]))/260)*log2((double(_entr_idio[0][1]))/260 ) << endl ;
-    cout << "clase PERMANENTER   = " << -1*((double(_entr_idio[0][2]))/260)*log2((double(_entr_idio[0][2]))/260 ) << endl ;
-    cout << "clase PERMANENTE-NR = " << -1*((double(_entr_idio[0][3]))/260)*log2((double(_entr_idio[0][3]))/260 ) << endl ;
-    cout << "clase M-RAFAGA      = " << -1*((double(_entr_idio[0][4]))/260)*log2((double(_entr_idio[0][4]))/260 ) << endl ;
-    cout << "clase DRIFT         = " << -1*((double(_entr_idio[0][5]))/260)*log2((double(_entr_idio[0][5]))/260 ) << endl ;
-    cout << "clase OTROS         = " << -1*((double(_entr_idio[0][6]))/260)*log2((double(_entr_idio[0][6]))/260 ) << endl ;
+    cout << entr_idioma[0][0] << endl;
     cout << "-----------------------" << endl;
     cout << "ENTROPIA PARA EL ENG " << endl;
-    cout << "clase PERIODICA     = " << -1*((double(_entr_idio[1][0]))/390)*log2((double(_entr_idio[1][0]))/390 ) << endl ;
-    cout << "clase RAFAGA        = " << -1*((double(_entr_idio[1][1]))/390)*log2((double(_entr_idio[1][1]))/390 ) << endl ;
-    cout << "clase PERMANENTER   = " << -1*((double(_entr_idio[1][2]))/390)*log2((double(_entr_idio[1][2]))/390 ) << endl ;
-    cout << "clase PERMANENTE-NR = " << -1*((double(_entr_idio[1][3]))/390)*log2((double(_entr_idio[1][3]))/390 ) << endl ;
-    cout << "clase M-RAFAGA      = " << -1*((double(_entr_idio[1][4]))/390)*log2((double(_entr_idio[1][4]))/390 ) << endl ;
-    cout << "clase DRIFT         = " << -1*((double(_entr_idio[1][5]))/390)*log2((double(_entr_idio[1][5]))/390 ) << endl ;
-    cout << "clase OTROS         = " << -1*((double(_entr_idio[1][6]))/390)*log2((double(_entr_idio[1][6]))/390 ) << endl ;
+    cout << entr_idioma[0][1] << endl;
 }
 
 
@@ -435,108 +429,300 @@ void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7])
     }
 
     double al=0.0;
+    double suma=0.0;
+    double entro_x_categoria[26];
     int i;
-    for(i=0;i<7;i++){
-        if(i==0){cout << "ENTROPIA DE LAS PERIODICA.." << endl;}
-        if(i==1){cout << "ENTROPIA DE LAS RAFAGA.." << endl;}
-        if(i==2){cout << "ENTROPIA DE LAS PERMANENTER.." << endl;}
-        if(i==3){cout << "ENTROPIA DE LAS PERMANENTE-NR.." << endl;}
-        if(i==4){cout << "ENTROPIA DE LAS M-RAFAGA.." << endl;}
-        if(i==5){cout << "ENTROPIA DE LAS DRIFT.." << endl;}
-        if(i==6){cout << "ENTROPIA DE LAS OTROS.." << endl;}
-        for (int j=0;j<26;j++){
-            if(j==0){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Arts &amp; Humanities :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==1){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Business &amp; Finance :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==2){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Consumer Electronics :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==3){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Education &amp; Reference :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==4){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Entertainment &amp; Music :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==5){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Health:" <<  -1*(al)*log2(al) << endl ;
-            }if(j==6){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Games &amp; Recreation:" <<  -1*(al)*log2(al) << endl ;
-            }if(j==7){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Science &amp; Mathematics :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==8){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Beauty &amp; Style :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==9){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Sports :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==10){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Social Science :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==11){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de  Cars &amp; Transportation:" <<  -1*(al)*log2(al) << endl ;
-            }if(j==12){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Dining Out :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==13){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Food &amp; Drink:" <<  -1*(al)*log2(al) << endl ;
-            }if(j==14){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Home &amp; Garden :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==15){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Local Businesses :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==16){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Family &amp; Relationships :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==17){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de News &amp; Events :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==18){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Pets :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==19){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Politics &amp; Government :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==20){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Environment :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==21){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Society &amp; Culture :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==22){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Travel :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==23){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Computers &amp; Internet :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==24){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Arts &amp; Humanities :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==25){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Pregnancy &amp; Parenting :" <<  -1*(al)*log2(al) << endl ;
-            }if(j==26){
-                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
-                cout << "Entropia de Yahoo Products :" <<  -1*(al)*log2(al) << endl ;
-            }
+    cout << "ENTROPIA POR CLASES" << endl;
+    for (int j=0;j<26;j++){
+        if(j==0){
 
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=(-1*(al)*log2(al));
+            }
+            entro_x_categoria[0]=suma;
+            suma=0.0;
+
+        }if(j==1){
+            //cout << "Entropia de Arts &amp; Humanities :" <<  -1*(al)*log2(al) << endl ;
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[1]=suma;
+            suma=0.0;
+        }if(j==2){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[2]=suma;
+            suma=0.0;
+        }if(j==3){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[3]=suma;
+            suma=0.0;
+        }if(j==4){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[4]=suma;
+            suma=0.0;
+        }if(j==5){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[5]=suma;
+            suma=0.0;
+        }if(j==6){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[6]=suma;
+            suma=0.0;
+        }if(j==7){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[7]=suma;
+            suma=0.0;
+        }if(j==8){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[8]=suma;
+            suma=0.0;
+        }if(j==9){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[9]=suma;
+            suma=0.0;
+        }if(j==10){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[10]=suma;
+            suma=0.0;
+        }if(j==11){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[11]=suma;
+            suma=0.0;
+        }if(j==12){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[12]=suma;
+            suma=0.0;
+        }if(j==13){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[13]=suma;
+            suma=0.0;
+        }if(j==14){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[14]=suma;
+            suma=0.0;
+        }if(j==15){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[15]=suma;
+            suma=0.0;
+        }if(j==16){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[16]=suma;
+            suma=0.0;
+        }if(j==17){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[17]=suma;
+            suma=0.0;
+        }if(j==18){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[18]=suma;
+            suma=0.0;
+        }if(j==19){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[19]=suma;
+            suma=0.0;
+        }if(j==20){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[20]=suma;
+            suma=0.0;
+        }if(j==21){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[21]=suma;
+            suma=0.0;
+        }if(j==22){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[22]=suma;
+            suma=0.0;
+        }if(j==23){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[23]=suma;
+            suma=0.0;
+        }if(j==24){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[24]=suma;
+            suma=0.0;
+        }if(j==25){
+            for(i=0;i<7;i++){
+                al=((double(m[i][j]))/_cantidad_x_categoria[0][i]);
+                if(al==0)al=1;
+                suma+=-1*(al)*log2(al);
+            }
+            entro_x_categoria[25]=suma;
+            suma=0.0;
         }
+
+    }
+    for (int i=0;i< 26;i++){
+        cout << entro_x_categoria[i] << endl;
+
+    }
+
+}
+void _Entro_General(int m[1][7]){
+    double al=0.0,suma=0.0;
+    for (int i=0;i<7;i++){
+        al=((double(m[0][i]))/650.0);
+        if(al==0)al=1;
+        suma+=-1*(al)*log2(al);
+    }
+    cout << "ENTROPIA DE MANERA GENERAL ---> " << suma << endl;
+}
+void Anclaje_vs_Seguidores(int m[1][7], std::vector<string> anclaje) {
+    for(int i=0;i<7;i++){
+        cout << "El anclaje " << anclaje[i] << " posee -> " << m[0][i] << " Seguidores"<< endl;
     }
 }
+void Anclaje_vs_NRespuestas(int m[1][7],std::vector<string> nrespuestas){
+    for(int i=0;i<7;i++){
+        cout << "El anclaje " << nrespuestas[i] << " posee -> " << m[0][i] << " Respuestas" << endl;
+    }
+}
+void Categorias_vs_NRespuestas (std::map<string,std::set<string> > C,std::map <string,Datos> P,std::vector<string> categoria){
 
+    int m[1][27];
+    for (int i=0; i<26;i++){
+        m[0][i]=0;
+    }
+    for (auto i1=P.begin();i1!=P.end();i1++){
+        for(auto i2=i1->second.Categoria.begin();i2!=i1->second.Categoria.end();i2++){
+            //cout << *i2 << endl;
+            if(*i2=="Arts &amp; Humanities"){m[0][0]+=i1->second.Respuestas;continue;}
+            if(*i2=="Business &amp; Finance"){m[0][1]+=i1->second.Respuestas;continue;}
+            if(*i2=="Consumer Electronics"){m[0][2]+=i1->second.Respuestas;continue;}
+            if(*i2=="Education &amp; Reference"){m[0][3]+=i1->second.Respuestas;continue;}
+            if(*i2=="Entertainment &amp; Music"){m[0][4]+=i1->second.Respuestas;continue;}
+            if(*i2=="Health"){m[0][5]+=i1->second.Respuestas;continue;}
+            if(*i2=="Games &amp; Recreation"){m[0][6]+=i1->second.Respuestas;continue;}
+            if(*i2=="Science &amp; Mathematics"){m[0][7]+=i1->second.Respuestas;continue;}
+            if(*i2=="Beauty &amp; Style"){m[0][8]+=i1->second.Respuestas;continue;}
+            if(*i2=="Sports"){m[0][9]+=i1->second.Respuestas;continue;}
+            if(*i2=="Social Science"){m[0][10]+=i1->second.Respuestas;continue;}
+            if(*i2=="Cars &amp; Transportation"){m[0][11]+=i1->second.Respuestas;continue;}
+            if(*i2=="Dining Out"){m[0][12]+=i1->second.Respuestas;continue;}
+            if(*i2=="Food &amp; Drink"){m[0][13]+=i1->second.Respuestas;continue;}
+            if(*i2=="Home &amp; Garden"){m[0][14]+=i1->second.Respuestas;continue;}
+            if(*i2=="Local Businesses"){m[0][15]+=i1->second.Respuestas;continue;}
+            if(*i2=="Family &amp; Relationships"){m[0][16]+=i1->second.Respuestas;continue;}
+            if(*i2=="News &amp; Events"){m[0][17]+=i1->second.Respuestas;continue;}
+            if(*i2=="Pets"){m[0][18]+=i1->second.Respuestas;continue;}
+            if(*i2=="Politics &amp; Government"){m[0][19]+=i1->second.Respuestas;continue;}
+            if(*i2=="Environment"){m[0][20]+=i1->second.Respuestas;continue;}
+            if(*i2=="Society &amp; Culture"){m[0][21]+=i1->second.Respuestas;continue;}
+            if(*i2=="Travel"){m[0][22]+=i1->second.Respuestas;continue;}
+            if(*i2=="Computers &amp; Internet"){m[0][23]+=i1->second.Respuestas;continue;}
+            if(*i2=="Pregnancy &amp; Parenting"){m[0][24]+=i1->second.Respuestas;continue;}
+            if(*i2=="Yahoo Products"){m[0][25]+=i1->second.Respuestas;continue;}
+        }
+    }
+    int sum=0.0;
+    for (int i=0; i<26;i++){
+        cout << "La categoria " << categoria[i] << " posee -> " << m[0][i] << " numeros de respuestas"  << endl;
+        sum+=m[0][i];
+    }
+    cout << "CANTIDAD DE respuestas " << sum << endl;
+}
 int main(int argc, char *argv[]){
-    Anclaje Anclaje_vs_Seguidores;
+    //Anclaje Anclaje_vs_Seguidores;
     std::map <string,Datos> Preguntas;
     int _entro_idio[1][2];//idioma
     int _entro_clase[1][7];//anclaje
+    int _n_respuestas[1][7];//Anclaje_vs_NRespuestas
 
     std::ifstream in("datos.csv");
 
@@ -575,8 +761,10 @@ int main(int argc, char *argv[]){
 
     for (int i=0;i<2;i++)
         _entro_idio[0][i]=0;
-    for (int i=0;i<7;i++)
+    for (int i=0;i<7;i++){
         _entro_clase[0][i]=0;
+        _n_respuestas[0][i]=0;
+    }
 
     for (auto i=Preguntas.begin();i!=Preguntas.end();i++){
         /*
@@ -594,14 +782,72 @@ int main(int argc, char *argv[]){
         05 Modas
         06 Otras
         */
-        if(i->second.Clase=="PERIODICA")_entro_clase[0][0]++;
-        if(i->second.Clase=="RAFAGA")_entro_clase[0][1]++;
-        if(i->second.Clase=="PERMANENTER")_entro_clase[0][2]++;
-        if(i->second.Clase=="PERMANENTE-NR")_entro_clase[0][3]++;
-        if(i->second.Clase=="M-RAFAGA")_entro_clase[0][4]++;
-        if(i->second.Clase=="DRIFT")_entro_clase[0][5]++;
-        if(i->second.Clase=="OTROS")_entro_clase[0][6]++;
+        if(i->second.Clase=="PERIODICA"){
+            _entro_clase[0][0]++;
+            _n_respuestas[0][0]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="RAFAGA"){
+            _entro_clase[0][1]++;
+            _n_respuestas[0][1]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="PERMANENTER"){
+            _entro_clase[0][2]++;
+            _n_respuestas[0][2]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="PERMANENTE-NR"){
+            _entro_clase[0][3]++;
+            _n_respuestas[0][3]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="M-RAFAGA"){
+            _entro_clase[0][4]++;
+            _n_respuestas[0][4]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="DRIFT"){
+            _entro_clase[0][5]++;
+            _n_respuestas[0][5]+=i->second.Respuestas;
+        }
+        if(i->second.Clase=="OTROS"){
+            _entro_clase[0][6]++;
+            _n_respuestas[0][6]+=i->second.Respuestas;
+        }
+
     }
+    std::vector<string> anclaje;
+
+    anclaje.push_back("PERIODICA");anclaje.push_back("RAFAGA");anclaje.push_back("PERMANENTER");
+    anclaje.push_back("PERMANENTE-NR");anclaje.push_back("M-RAFAGA");anclaje.push_back("DRIFT");anclaje.push_back("OTROS");
+
+    std::vector<string> categorias;
+
+    categorias.push_back("Arts &amp; Humanities");
+    categorias.push_back("Games &amp; Recreation");
+    categorias.push_back("Food &amp; Drink");
+    categorias.push_back("Home &amp; Garden");
+    categorias.push_back("Local Businesses");
+    categorias.push_back("Business &amp; Finance");
+    categorias.push_back("Science &amp; Mathematics");
+    categorias.push_back("Family &amp; Relationships");
+    categorias.push_back("News &amp; Events");
+    categorias.push_back("Pets");
+    categorias.push_back("Consumer Electronics");
+    categorias.push_back("Beauty &amp; Style");
+    categorias.push_back("Politics &amp; Government");
+    categorias.push_back("Environment");
+    categorias.push_back("Education &amp; Reference");
+    categorias.push_back("Sports");
+    categorias.push_back("Society &amp; Culture");
+    categorias.push_back("Travel");
+    categorias.push_back("Arts &amp; Humanities");
+    categorias.push_back("Entertainment &amp; Music");
+    categorias.push_back("Social Science");
+    categorias.push_back("Computers &amp; Internet");
+    categorias.push_back("Pregnancy &amp; Parenting");
+    categorias.push_back("Yahoo Products");
+    categorias.push_back("Health");
+    categorias.push_back("Cars &amp; Transportation");
+
+
+
     cout << "PROBABILIDADES" << endl;
     cout << "PERIODICA      : " << Probabilidades(_entro_clase[0][0]) << "%" << endl;
     cout << "RAFAGA         : " << Probabilidades(_entro_clase[0][1]) << "%" << endl;
@@ -612,34 +858,34 @@ int main(int argc, char *argv[]){
     cout << "OTROS          : " << Probabilidades(_entro_clase[0][6]) << "%" << endl;
     cout << "--------------" << endl;
 
-
-    cout << "Entropia Para el IDIOMA ESP = " << -1*((double(_entro_idio[0][0]))/650)*log2((double(_entro_idio[0][0]))/650 ) << endl ;
-    cout << "Entropia Para el IDIOMA ENG = " << -1*((double(_entro_idio[0][1]))/650)*log2((double(_entro_idio[0][1]))/650 ) << endl ;
-
-    cout << "Entropia Para la clase PERIODICA     = " << -1*((double(_entro_clase[0][0]))/650)*log2((double(_entro_clase[0][0]))/650 ) << endl ;
-    cout << "Entropia Para la clase RAFAGA        = " << -1*((double(_entro_clase[0][1]))/650)*log2((double(_entro_clase[0][1]))/650 ) << endl ;
-    cout << "Entropia Para la clase PERMANENTER   = " << -1*((double(_entro_clase[0][2]))/650)*log2((double(_entro_clase[0][2]))/650 ) << endl ;
-    cout << "Entropia Para la clase PERMANENTE-NR = " << -1*((double(_entro_clase[0][3]))/650)*log2((double(_entro_clase[0][3]))/650 ) << endl ;
-    cout << "Entropia Para la clase M-RAFAGA      = " << -1*((double(_entro_clase[0][4]))/650)*log2((double(_entro_clase[0][4]))/650 ) << endl ;
-    cout << "Entropia Para la clase DRIFT         = " << -1*((double(_entro_clase[0][5]))/650)*log2((double(_entro_clase[0][5]))/650 ) << endl ;
-    cout << "Entropia Para la clase OTROS         = " << -1*((double(_entro_clase[0][6]))/650)*log2((double(_entro_clase[0][6]))/650 ) << endl ;
     /*
 
         Entropias
 
     */
     //por idioma...
+    cout << " ENTROIA IDIOMAS " << endl;
     _Entropia_Idioma(Preguntas);
     //por categorias
+    cout << " ENTROIA Categorias " << endl;
     _Entro_Categoria(Preguntas,_entro_clase);
-
+    //General
+    cout << " ENTROIA General " << endl;
+    _Entro_General(_entro_clase);
 
     /*
         RELACIONES....
-    */
-    Categorias_vs_Seguidores(Categorias,Preguntas);
-    //Anclaje_vs_Seguidores(_entro_clase);
 
+    */
+    cout << "Relaciones categorias vs seguidores " << endl;
+    Categorias_vs_Seguidores(Categorias,Preguntas,categorias);//TABLA
+    cout << "Relaciones anclaje vs seguidores " << endl;
+    Anclaje_vs_Seguidores(_entro_clase,anclaje);//Grafico
+
+    cout << "Relaciones ANCLAJE vs nrespuestas " << endl;
+    Anclaje_vs_NRespuestas(_n_respuestas,anclaje);
+    cout << "Relaciones categorias vs NRESPUESTAS " << endl;
+    Categorias_vs_NRespuestas(Categorias,Preguntas,categorias);
     return 0;
 }
 
