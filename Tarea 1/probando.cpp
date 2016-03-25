@@ -183,6 +183,7 @@ void _Entropia_Idioma(std::map <string,Datos> P){
 
 void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7],std::vector<string> categoria){
     int m[7][27];
+
     for (int i=0; i<26;i++){
         m[0][i]=0;m[1][i]=0;m[2][i]=0;m[3][i]=0;m[4][i]=0;m[5][i]=0;m[6][i]=0;
     }
@@ -647,8 +648,18 @@ void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7],
     }
     std::ofstream archivo("ENTROPIA CATEGORIA.csv");
     for (int i=0;i< 26;i++){
-        archivo << "La categoria " << categoria[i] << ";" << entro_x_categoria[i] << endl;
+        archivo << "La categoria " << categoria[i] << "," << entro_x_categoria[i] << endl;
 
+    }
+    std::ofstream archivo1("Relacion CATEGORIA vs anclaje.csv");
+    archivo1 << ",";
+    archivo1 << "PERIODICA," << "RAFAGA," << "PERMANENTER," << "PERMANENTE-NR," << "M-RAFAGA," << "DRIFT," << "OTROS," << endl;
+    for(int i=0;i<26;i++){
+        archivo1 << categoria[i] << ",";
+        for(int j=0;j<7;j++){
+            archivo1 << m[j][i] << ",";
+        }
+        archivo1 << endl;
     }
 
 }
