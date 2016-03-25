@@ -101,7 +101,7 @@ void Categorias_vs_Seguidores (std::map<string,std::set<string> > C,std::map <st
     }
     std::ofstream archivo("Relacion Categorias_vs_Seguidores.csv");
     for (int i=0; i<26;i++){
-        archivo << "La categoria " << categoria[i] << ";" << m[0][i] << endl;
+        archivo << categoria[i] << "," << m[0][i] << endl;
     }
 }
 double Probabilidades (int v1){
@@ -174,9 +174,9 @@ void _Entropia_Idioma(std::map <string,Datos> P){
     }
     std::ofstream archivo("ENTROPIA IDIOMAS.csv");
 
-    archivo << "ENTROPIA PARA EL ESPN " << ";";
+    archivo << "ENTROPIA PARA EL ESPN " << ",";
     archivo << entr_idioma[0][0] << endl;
-    archivo << "ENTROPIA PARA EL ENG " << ";";
+    archivo << "ENTROPIA PARA EL ENG " << ",";
     archivo << entr_idioma[0][1] << endl;
 }
 
@@ -648,7 +648,7 @@ void _Entro_Categoria(std::map <string,Datos> P,int _cantidad_x_categoria[1][7],
     }
     std::ofstream archivo("ENTROPIA CATEGORIA.csv");
     for (int i=0;i< 26;i++){
-        archivo << "La categoria " << categoria[i] << "," << entro_x_categoria[i] << endl;
+        archivo << categoria[i] << "," << entro_x_categoria[i] << endl;
 
     }
     std::ofstream archivo1("Relacion CATEGORIA vs anclaje.csv");
@@ -670,7 +670,8 @@ void _Entro_General(int m[1][7]){
         if(al==0)al=1;
         suma+=-1*(al)*log2(al);
     }
-    cout << "ENTROPIA DE MANERA GENERAL ---> " << suma << endl;
+    std::ofstream archivo ("ENTROPIA DE MANERA GENERAL.csv");
+    archivo << "ENTROPIA DE MANERA GENERAL ---> ," << suma << endl;
 }
 void Anclaje_vs_Seguidores(int m[1][7], std::vector<string> anclaje) {
     std::ofstream archivo("Relacion Anclaje vs Seguidores.csv");
@@ -726,7 +727,7 @@ void Categorias_vs_NRespuestas (std::map<string,std::set<string> > C,std::map <s
     std::ofstream archivo("Relacion Categoria vs NRESPUESTAS.csv");
 
     for (int i=0; i<26;i++){
-        archivo <<  categoria[i] << ";" << m[0][i] << endl;
+        archivo <<  categoria[i] << "," << m[0][i] << endl;
     }
 }
 int main(int argc, char *argv[]){
@@ -840,43 +841,43 @@ int main(int argc, char *argv[]){
     std::vector<string> categorias;
 
     categorias.push_back("Arts &amp; Humanities");
+    categorias.push_back("Business &amp; Finance");
+    categorias.push_back("Consumer Electronics");
+    categorias.push_back("Education &amp; Reference");
+    categorias.push_back("Entertainment &amp; Music");
+    categorias.push_back("Health");
     categorias.push_back("Games &amp; Recreation");
+    categorias.push_back("Science &amp; Mathematics");
+    categorias.push_back("Beauty &amp; Style");
+    categorias.push_back("Sports");
+    categorias.push_back("Social Science");
+    categorias.push_back("Cars &amp; Transportation");
+    categorias.push_back("Dining Out");
     categorias.push_back("Food &amp; Drink");
     categorias.push_back("Home &amp; Garden");
     categorias.push_back("Local Businesses");
-    categorias.push_back("Business &amp; Finance");
-    categorias.push_back("Science &amp; Mathematics");
     categorias.push_back("Family &amp; Relationships");
     categorias.push_back("News &amp; Events");
     categorias.push_back("Pets");
-    categorias.push_back("Consumer Electronics");
-    categorias.push_back("Beauty &amp; Style");
     categorias.push_back("Politics &amp; Government");
     categorias.push_back("Environment");
-    categorias.push_back("Education &amp; Reference");
-    categorias.push_back("Sports");
     categorias.push_back("Society &amp; Culture");
     categorias.push_back("Travel");
-    categorias.push_back("Arts &amp; Humanities");
-    categorias.push_back("Entertainment &amp; Music");
-    categorias.push_back("Social Science");
     categorias.push_back("Computers &amp; Internet");
     categorias.push_back("Pregnancy &amp; Parenting");
     categorias.push_back("Yahoo Products");
-    categorias.push_back("Health");
-    categorias.push_back("Cars &amp; Transportation");
 
 
 
-    cout << "PROBABILIDADES" << endl;
-    cout << "PERIODICA      : " << Probabilidades(_entro_clase[0][0]) << "%" << endl;
-    cout << "RAFAGA         : " << Probabilidades(_entro_clase[0][1]) << "%" << endl;
-    cout << "PERMANENTER    : " << Probabilidades(_entro_clase[0][2]) << "%" << endl;
-    cout << "PERMANENTE-NR  : " << Probabilidades(_entro_clase[0][3]) << "%" << endl;
-    cout << "M-RAFAGA       : " << Probabilidades(_entro_clase[0][4]) <<  "%" << endl;
-    cout << "DRIFT          : " << Probabilidades(_entro_clase[0][5]) << "%" << endl;
-    cout << "OTROS          : " << Probabilidades(_entro_clase[0][6]) << "%" << endl;
-    cout << "--------------" << endl;
+
+    std::ofstream archivo ("PROBABILIDADES.csv");
+    archivo << "PERIODICA      : ," << Probabilidades(_entro_clase[0][0]) << "%" << endl;
+    archivo << "RAFAGA         : ," << Probabilidades(_entro_clase[0][1]) << "%" << endl;
+    archivo << "PERMANENTER    : ," << Probabilidades(_entro_clase[0][2]) << "%" << endl;
+    archivo << "PERMANENTE-NR  : ," << Probabilidades(_entro_clase[0][3]) << "%" << endl;
+    archivo << "M-RAFAGA       : ," << Probabilidades(_entro_clase[0][4]) <<  "%" << endl;
+    archivo << "DRIFT          : ," << Probabilidades(_entro_clase[0][5]) << "%" << endl;
+    archivo << "OTROS          : ," << Probabilidades(_entro_clase[0][6]) << "%" << endl;
 
     /*
 
@@ -884,26 +885,21 @@ int main(int argc, char *argv[]){
 
     */
     //por idioma...
-    cout << " ENTROIA IDIOMAS " << endl;
     _Entropia_Idioma(Preguntas);
     //por categorias
-    cout << " ENTROIA Categorias " << endl;
     _Entro_Categoria(Preguntas,_entro_clase,categorias);
     //General
-    cout << " ENTROIA General " << endl;
     _Entro_General(_entro_clase);
     /*
         RELACIONES....
 
     */
-    cout << "Relaciones categorias vs seguidores " << endl;
     Categorias_vs_Seguidores(Categorias,Preguntas,categorias);//TABLA
-    cout << "Relaciones anclaje vs seguidores " << endl;
+
     Anclaje_vs_Seguidores(_seguidores,anclaje);//Grafico
 
-    cout << "Relaciones ANCLAJE vs nrespuestas " << endl;
     Anclaje_vs_NRespuestas(_n_respuestas,anclaje);
-    cout << "Relaciones categorias vs NRESPUESTAS " << endl;
+
     Categorias_vs_NRespuestas(Categorias,Preguntas,categorias);
 
     return 0;
